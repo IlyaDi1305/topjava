@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class MealsUtil {
 
-    public static final List<Meal> MEALS = Arrays.asList(
+    public static final List<Meal> meals = Arrays.asList(
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000),
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500),
@@ -26,13 +26,13 @@ public class MealsUtil {
 
     public static final int CALORIES_PER_DAY = 2000;
 
-    public static List<MealTo> filteredByStreams(List<Meal> MEALS, LocalTime startTime, LocalTime endTime, int CALORIES_PER_DAY) {
-        Map<LocalDate, Integer> caloriesSumByDate = MEALS.stream()
+    public static List<MealTo> filteredByStreams(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
+        Map<LocalDate, Integer> caloriesSumByDate = meals.stream()
                 .collect(
                         Collectors.groupingBy(Meal::getDate, Collectors.summingInt(Meal::getCalories))
                 );
 
-        return MEALS.stream()
+        return meals.stream()
                 .filter(meal -> TimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime))
                 .map(meal -> createTo(meal, caloriesSumByDate.get(meal.getDate()) > CALORIES_PER_DAY))
                 .collect(Collectors.toList());
