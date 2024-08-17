@@ -19,12 +19,14 @@
     <h3><a href="index.html">Home</a></h3>
     <hr>
     <h3>Meals</h3>
-    <table border="1">
+    <a href="meals?action=new">Add Meal</a>
+    <table border="1" cellpadding="10" cellspacing="0">
         <thead>
         <tr>
             <th>Date</th>
             <th>Description</th>
             <th>Calories</th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -37,6 +39,10 @@
             </td>
             <td>${mealTo.description}</td>
             <td>${mealTo.calories}</td>
+            <td>
+                <a href="meals?action=edit&uuid=${mealTo.uuid}">Update</a>
+                <a href="meals?action=delete&uuid=${mealTo.uuid}">Delete</a>
+            </td>
         </tr>
         </c:forEach>
         <tbody>

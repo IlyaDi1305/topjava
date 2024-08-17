@@ -1,17 +1,18 @@
 package ru.javawebinar.topjava.model;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class MealTo {
+
+    private final UUID uuid;
     private final LocalDateTime dateTime;
-
     private final String description;
-
     private final int calories;
-
     private final boolean excess;
 
-    public MealTo(LocalDateTime dateTime, String description, int calories, boolean excess) {
+    public MealTo(UUID uuid, LocalDateTime dateTime, String description, int calories, boolean excess) {
+        this.uuid = uuid;
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
@@ -20,12 +21,16 @@ public class MealTo {
 
     @Override
     public String toString() {
-        return "MealTo{" +
-                "dateTime=" + dateTime +
+        return "MealTo{" + "uuid=" + uuid +
+                ", dateTime=" + dateTime +
                 ", description='" + description + '\'' +
                 ", calories=" + calories +
                 ", excess=" + excess +
                 '}';
+    }
+
+    public UUID getUuid() {
+        return uuid;
     }
 
     public int getCalories() {
@@ -43,5 +48,4 @@ public class MealTo {
     public LocalDateTime getDateTime() {
         return dateTime;
     }
-
 }
