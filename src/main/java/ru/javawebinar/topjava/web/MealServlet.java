@@ -5,7 +5,6 @@ import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.model.Meal;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,11 +12,9 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.UUID;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-@WebServlet
 public class MealServlet extends HttpServlet {
     private static final Logger log = getLogger(MealServlet.class);
 
@@ -25,11 +22,10 @@ public class MealServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
 
-        log.info("Received GET request with action: " + action);
+//        log.info("Received GET request with action: " + action);
+        log.info("Received GET request with action: {}", action);
 
         if (action == null) {
             action = "list";
@@ -46,7 +42,7 @@ public class MealServlet extends HttpServlet {
                 break;
             case "delete":
                 log.info("Action 'delete': Deleting a meal");
-                deleteMeal(request, response);
+                delete(request, response);
                 break;
             default:
                 log.info("Action 'list': Listing all meals");
@@ -58,10 +54,9 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
 
-        log.info("Received POST request with action: " + action);
+        log.info("Received POST request with action: {}", action);
 
         if (action == null) {
             action = "list";
@@ -69,10 +64,10 @@ public class MealServlet extends HttpServlet {
 
         switch (action) {
             case "add":
-                addMeal(request, response);
+                add(request, response);
                 break;
             case "update":
-                updateMeal(request, response);
+                update(request, response);
                 break;
             default:
                 listMeals(request, response);
@@ -82,52 +77,51 @@ public class MealServlet extends HttpServlet {
 
     private void listMeals(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.info("Listing all meals");
-        List<Meal> meals = mealsUtil.getAllMeals();
-        request.setAttribute("meals", MealsUtil.filteredByStreams(MealsUtil.meals, LocalTime.MIN, LocalTime.MAX, MealsUtil.CALORIES_PER_DAY));
+        List<Meal> meals = mealsUtil.getAll();
+        request.setAttribute("meals", MealsUtil.filteredByStreams(meals, LocalTime.MIN, LocalTime.MAX, MealsUtil.CALORIES_PER_DAY));
         request.getRequestDispatcher("/meals.jsp").forward(request, response);
     }
 
     private void showNewForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.info("Showing form for a new meal");
-        request.getRequestDispatcher("/meal-form.jsp").forward(request, response);
+        request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
     }
 
     private void showEditForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        UUID uuid = UUID.fromString(request.getParameter("uuid"));
-        log.info("Showing edit form for meal with UUID: " + uuid);
-        Meal existingMeal = mealsUtil.getMealById(uuid);
+        int id = Integer.parseInt(request.getParameter("id"));
+        log.info("Showing edit form for meal with id: {}", id);
+        Meal existingMeal = mealsUtil.getById(id);
         request.setAttribute("meal", existingMeal);
-        request.getRequestDispatcher("/meal-form.jsp").forward(request, response);
+        request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
     }
 
-    private void addMeal(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void add(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Meal newMeal = parseFromRequest(request);
+        log.info("Adding new meal: {}", newMeal);
+        mealsUtil.add(newMeal);
+        response.sendRedirect("meals");
+    }
+
+    private void update(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        Meal meal = parseFromRequest(request);
+        meal.setId(id);
+        log.info("Updating meal with id: {}, new details: {}", id , meal);
+        mealsUtil.update(meal);
+        response.sendRedirect("meals");
+    }
+
+    private void delete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        log.info("Deleting meal with id: {}", id);
+        mealsUtil.delete(id);
+        response.sendRedirect("meals");
+    }
+
+    private Meal parseFromRequest(HttpServletRequest request) {
         LocalDateTime dateTime = LocalDateTime.parse(request.getParameter("dateTime"));
         String description = request.getParameter("description");
         int calories = Integer.parseInt(request.getParameter("calories"));
-        log.info("Adding new meal with description: " + description + ", dateTime: " + dateTime + ", calories: " + calories);
-        Meal newMeal = new Meal(dateTime, description, calories);
-        mealsUtil.addMeal(newMeal);
-        response.sendRedirect("meals");
-    }
-
-    private void updateMeal(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        UUID uuid = UUID.fromString(request.getParameter("uuid"));
-        LocalDateTime dateTime = LocalDateTime.parse(request.getParameter("dateTime"));
-        String description = request.getParameter("description");
-        int calories = Integer.parseInt(request.getParameter("calories"));
-        log.info("Updating meal with UUID: " + uuid + ", new description: " + description + ", new dateTime: " + dateTime + ", new calories: " + calories);
-        Meal meal = new Meal(dateTime, description, calories);
-        meal.setCalories(calories);
-        meal.setUuid(uuid);
-        mealsUtil.updateMeal(meal);
-        response.sendRedirect("meals");
-    }
-
-    private void deleteMeal(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        UUID uuid = UUID.fromString(request.getParameter("uuid"));
-        log.info("Deleting meal with UUID: " + uuid);
-        mealsUtil.deleteMeal(uuid);
-        response.sendRedirect("meals");
+        return new Meal(dateTime, description, calories);
     }
 }
-

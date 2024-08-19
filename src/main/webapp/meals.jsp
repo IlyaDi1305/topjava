@@ -35,13 +35,13 @@
         <tr class="${mealTo.excess ? 'excess' : 'notexcess'}">
             <td>
                 <fmt:parseDate value="${mealTo.dateTime}" pattern="y-M-dd'T'H:m" var="parsedDate"/>
-                <fmt:formatDate value="${parsedDate}" pattern="dd.MM.yyyy HH:mm"/>
+                <fmt:formatDate value="${parsedDate}" pattern="yyyy.MM.dd HH:mm"/>
             </td>
             <td>${mealTo.description}</td>
             <td>${mealTo.calories}</td>
             <td>
-                <a href="meals?action=edit&uuid=${mealTo.uuid}">Update</a>
-                <a href="meals?action=delete&uuid=${mealTo.uuid}">Delete</a>
+                <a href="meals?action=edit&id=${mealTo.id}">Update</a>
+                <a href="meals?action=delete&id=${mealTo.id}">Delete</a>
             </td>
         </tr>
         </c:forEach>
