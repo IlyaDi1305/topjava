@@ -3,7 +3,6 @@ package ru.javawebinar.topjava.util;
 import org.slf4j.Logger;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
-import ru.javawebinar.topjava.web.MealServlet;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,7 +10,6 @@ import java.time.LocalTime;
 import java.time.Month;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
@@ -21,9 +19,10 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 public class MealsUtil {
 
-    private static final Logger log = getLogger(MealServlet.class);
+    private static final Logger log = getLogger(MealsUtil.class);
     public static List<Meal> meals = new CopyOnWriteArrayList<>();
     private final Lock lock = new ReentrantLock();
+    private static int mealId = 1;
 
     public MealsUtil() {
         lock.lock();
@@ -36,14 +35,14 @@ public class MealsUtil {
             meals.add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000));
             meals.add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500));
             meals.add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410));
-            meals.forEach(meal -> meal.setUuid(UUID.randomUUID()));
+            meals.forEach(meal -> meal.setId(mealId++));
             log.info("Sample data initialization complete");
         } finally {
             lock.unlock();
         }
     }
 
-    public List<Meal> getAllMeals() {
+    public List<Meal> getAll() {
         lock.lock();
         try {
             log.info("Retrieving all meals");
@@ -53,34 +52,34 @@ public class MealsUtil {
         }
     }
 
-    public Meal getMealById(UUID uuid) {
-        log.info("Retrieving meal with UUID: " + uuid);
+    public Meal getById(int id) {
+        log.info("Retrieving meal with id: {}", id);
         for (Meal meal : meals) {
-            if (meal.getUuid().equals(uuid)) {
-                log.info("Meal found: " + meal);
+            if (meal.getId() == id) {
+                log.info("Meal found: {}",meal);
                 return meal;
             }
         }
-        log.warn("Meal not found for UUID: " + uuid);
+        log.warn("Meal not found for id: {}", id);
         return null;
     }
 
-    public void addMeal(Meal meal) {
+    public void add(Meal meal) {
         lock.lock();
         try {
-            log.info("Adding meal: " + meal);
-            meal.setUuid(UUID.randomUUID());
+            log.info("Adding meal: {}", meal);
+            meal.setId(mealId++);
             meals.add(meal);
         } finally {
             lock.unlock();
         }
     }
 
-    public void updateMeal(Meal meal) {
+    public void update(Meal meal) {
         lock.lock();
         try {
-            log.info("Updating meal with UUID: " + meal.getUuid());
-            Meal existingMeal = getMealById(meal.getUuid());
+            log.info("Updating meal with id: {}", meal.getId());
+            Meal existingMeal = getById(meal.getId());
             if (existingMeal != null) {
                 existingMeal.setDateTime(meal.getDateTime());
                 existingMeal.setDescription(meal.getDescription());
@@ -91,13 +90,13 @@ public class MealsUtil {
         }
     }
 
-    public void deleteMeal(UUID uuid) {
-        log.info("Deleting meal with UUID: " + uuid);
-        boolean removed = meals.removeIf(meal -> meal.getUuid().equals(uuid));
+    public void delete(int id) {
+        log.info("Deleting meal with id: {}", id);
+        boolean removed = meals.removeIf(meal -> meal.getId()==id);
         if (removed) {
-            log.info("Meal deleted: " + uuid);
+            log.info("Meal deleted: {}", id);
         } else {
-            log.warn("Meal not found for deletion: " + uuid);
+            log.warn("Meal not found for deletion: {}", id);
         }
     }
 
@@ -117,6 +116,6 @@ public class MealsUtil {
     }
 
     private static MealTo createTo(Meal meal, boolean excess) {
-        return new MealTo(meal.getUuid(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
+        return new MealTo(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
     }
 }

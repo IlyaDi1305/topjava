@@ -7,7 +7,7 @@
 <body>
 <h1>${meal == null ? "Add Meal" : "Edit Meal"}</h1>
 <form form action="meals" method="post" accept-charset="UTF-8">
-    <input type="hidden" name="uuid" value="${meal.uuid}">
+    <input type="hidden" name="id" value="${meal.id}">
     <table>
         <tr>
             <td>Date Time:</td>
