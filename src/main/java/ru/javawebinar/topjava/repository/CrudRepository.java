@@ -7,13 +7,13 @@ import java.util.List;
 
 public interface CrudRepository {
 
-    public List<Meal> getAll();
+    List<Meal> getAll();
 
-    public Meal getById(int id);
+    Meal getById(int id);
 
-    public void add(Meal meal);
+    void add(Meal meal);
 
-    public void update(int id, Meal meal);
+    void update(int id, Meal meal);
 
-    public void delete(int id);
+    void delete(int id);
 }

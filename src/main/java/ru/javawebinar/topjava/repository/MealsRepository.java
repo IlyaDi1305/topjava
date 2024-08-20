@@ -14,34 +14,15 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 public class MealsRepository implements CrudRepository {
 
-    protected Map<Integer, Meal> meals = new HashMap<>();
-    protected List<Meal> mealsTest = new ArrayList<Meal>();
-    protected static int mealId = 1;
+    private static final Logger log = getLogger(MealsUtil.class);
+    private final Lock lock = new ReentrantLock();
+    private Map<Integer, Meal> meals = new HashMap<>();
 
     public MealsRepository() {
-        lock.lock();
-        try {
-            log.info("Initializing MealsUtil with sample data");
-            mealsTest.add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500));
-            mealsTest.add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000));
-            mealsTest.add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500));
-            mealsTest.add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100));
-            mealsTest.add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000));
-            mealsTest.add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500));
-            mealsTest.add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410));
-            for (Meal meal : mealsTest) {
-                meal.setId(mealId++);
-                meals.put(meal.getId(), meal);
-            }
-            log.info("Sample data initialization complete");
-        } finally {
-            lock.unlock();
-        }
+        SampleData();
     }
 
-    protected static final Logger log = getLogger(MealsUtil.class);
-    protected final Lock lock = new ReentrantLock();
-
+    @Override
     public List<Meal> getAll() {
         lock.lock();
         try {
@@ -63,6 +44,8 @@ public class MealsRepository implements CrudRepository {
             return null;
         }
     }
+
+    private static int mealId = 1;
 
     @Override
     public void add(Meal meal) {
@@ -95,6 +78,28 @@ public class MealsRepository implements CrudRepository {
             log.info("Meal deleted: {}", id);
         } else {
             log.warn("Meal not found for deletion: {}", id);
+        }
+    }
+
+    private List<Meal> mealsSample = new ArrayList<Meal>();
+
+    private void SampleData() {
+        lock.lock();
+        try {
+            log.info("Initializing MealsUtil with sample data");
+            mealsSample.add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500));
+            mealsSample.add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000));
+            mealsSample.add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500));
+            mealsSample.add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100));
+            mealsSample.add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000));
+            mealsSample.add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500));
+            mealsSample.add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410));
+            for (Meal meal : mealsSample) {
+                add(meal);
+            }
+            log.info("Sample data initialization complete");
+        } finally {
+            lock.unlock();
         }
     }
 }
