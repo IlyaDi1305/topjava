@@ -1,6 +1,8 @@
 package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
+import ru.javawebinar.topjava.repository.CrudRepository;
+import ru.javawebinar.topjava.repository.MealsRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.model.Meal;
 
@@ -17,14 +19,18 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = getLogger(MealServlet.class);
+    private CrudRepository crudRepository;
 
-    private final MealsUtil mealsUtil = new MealsUtil();
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        crudRepository = new MealsRepository();
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
 
-//        log.info("Received GET request with action: " + action);
         log.info("Received GET request with action: {}", action);
 
         if (action == null) {
@@ -77,7 +83,7 @@ public class MealServlet extends HttpServlet {
 
     private void listMeals(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.info("Listing all meals");
-        List<Meal> meals = mealsUtil.getAll();
+        List<Meal> meals = crudRepository.getAll();
         request.setAttribute("meals", MealsUtil.filteredByStreams(meals, LocalTime.MIN, LocalTime.MAX, MealsUtil.CALORIES_PER_DAY));
         request.getRequestDispatcher("/meals.jsp").forward(request, response);
     }
@@ -90,7 +96,7 @@ public class MealServlet extends HttpServlet {
     private void showEditForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         log.info("Showing edit form for meal with id: {}", id);
-        Meal existingMeal = mealsUtil.getById(id);
+        Meal existingMeal = crudRepository.getById(id);
         request.setAttribute("meal", existingMeal);
         request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
     }
@@ -98,7 +104,7 @@ public class MealServlet extends HttpServlet {
     private void add(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Meal newMeal = parseFromRequest(request);
         log.info("Adding new meal: {}", newMeal);
-        mealsUtil.add(newMeal);
+        crudRepository.add(newMeal);
         response.sendRedirect("meals");
     }
 
@@ -106,15 +112,15 @@ public class MealServlet extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
         Meal meal = parseFromRequest(request);
         meal.setId(id);
-        log.info("Updating meal with id: {}, new details: {}", id , meal);
-        mealsUtil.update(meal);
+        log.info("Updating meal with id: {}, new details: {}", id, meal);
+        crudRepository.update(id, meal);
         response.sendRedirect("meals");
     }
 
     private void delete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         log.info("Deleting meal with id: {}", id);
-        mealsUtil.delete(id);
+        crudRepository.delete(id);
         response.sendRedirect("meals");
     }
 
