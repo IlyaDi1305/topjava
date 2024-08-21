@@ -7,6 +7,8 @@ import ru.javawebinar.topjava.util.MealsUtil;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -16,7 +18,8 @@ public class MealsRepository implements CrudRepository {
 
     private static final Logger log = getLogger(MealsUtil.class);
     private final Lock lock = new ReentrantLock();
-    private Map<Integer, Meal> meals = new HashMap<>();
+    private Map<Integer, Meal> meals = new ConcurrentHashMap<>();
+    private AtomicInteger counter = new AtomicInteger(0);
 
     public MealsRepository() {
         SampleData();
@@ -45,14 +48,12 @@ public class MealsRepository implements CrudRepository {
         }
     }
 
-    private static int mealId = 1;
-
     @Override
     public void add(Meal meal) {
         lock.lock();
         try {
             log.info("Adding meal: {}", meal);
-            meal.setId(mealId++);
+            meal.setId(counter.incrementAndGet());
             meals.put(meal.getId(), meal);
         } finally {
             lock.unlock();
