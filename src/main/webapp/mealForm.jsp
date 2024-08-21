@@ -5,8 +5,8 @@
     <title>Meal Form</title>
 </head>
 <body>
-<h1>${meal == null ? "Add Meal" : "Edit Meal"}</h1>
-<form form action="meals" method="post" accept-charset="UTF-8">
+<h1>${meal.id == 0 ? "Add Meal" : "Edit Meal"}</h1>
+<form action="meals" method="post" accept-charset="UTF-8">
     <input type="hidden" name="id" value="${meal.id}">
     <table>
         <tr>
@@ -23,8 +23,8 @@
         </tr>
         <tr>
             <td colspan="2">
-                <input type="submit" value="${meal == null ? "Add" : "Update"}">
-                <input type="hidden" name="action" value="${meal == null ? "add" : "update"}">
+                <input type="submit" value="${meal.id == 0 ? "Add" : "Update"}">
+                <input type="hidden" name="action" value="${meal.id == 0 ? "add" : "update"}">
                 <button onclick="window.history.back()" type="button">Cancel</button>
             </td>
         </tr>

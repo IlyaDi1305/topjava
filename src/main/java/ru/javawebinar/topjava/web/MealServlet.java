@@ -90,6 +90,7 @@ public class MealServlet extends HttpServlet {
 
     private void showNewForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.info("Showing form for a new meal");
+        request.setAttribute("meal", MealsUtil.getDefaultMeal());
         request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
     }
 
