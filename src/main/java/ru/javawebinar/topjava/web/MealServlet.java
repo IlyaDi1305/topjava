@@ -60,13 +60,13 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-        int idPars = Integer.parseInt(request.getParameter("id"));
+        int id = Integer.parseInt(request.getParameter("id"));
 
-        log.info("Received POST request with action: {}", idPars);
+        log.info("Received POST request with id: {}", id);
 
-        if (idPars == 0) {
+        if (id == 0) {
             add(request, response);
-        } else if (idPars > 0) {
+        } else if (id > 0) {
             update(request, response);
         } else {
             listMeals(request, response);
