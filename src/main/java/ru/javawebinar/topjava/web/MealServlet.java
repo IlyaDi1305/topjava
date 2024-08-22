@@ -1,8 +1,8 @@
 package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
-import ru.javawebinar.topjava.repository.CrudRepository;
-import ru.javawebinar.topjava.repository.MealsRepository;
+import ru.javawebinar.topjava.repository.CrudMealsRepository;
+import ru.javawebinar.topjava.repository.MealsHashMapRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.model.Meal;
 
@@ -19,12 +19,11 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = getLogger(MealServlet.class);
-    private CrudRepository crudRepository;
+    private CrudMealsRepository crudRepository;
 
     @Override
-    public void init() throws ServletException {
-        super.init();
-        crudRepository = new MealsRepository();
+    public void init(){
+        crudRepository = new MealsHashMapRepository();
     }
 
     @Override
@@ -60,13 +59,12 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-        int id = Integer.parseInt(request.getParameter("id"));
 
-        log.info("Received POST request with id: {}", id);
+        log.info("Received POST request with id: {}", getId(request));
 
-        if (id == 0) {
+        if (getId(request) == null) {
             add(request, response);
-        } else if (id > 0) {
+        } else if (getId(request) != null) {
             update(request, response);
         } else {
             listMeals(request, response);
@@ -82,14 +80,13 @@ public class MealServlet extends HttpServlet {
 
     private void showNewForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.info("Showing form for a new meal");
-        request.setAttribute("meal", MealsUtil.getDefaultMeal());
+        request.setAttribute("meal", new Meal(null, MealsUtil.currDateTime(), null, 0));
         request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
     }
 
     private void showEditForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int id = Integer.parseInt(request.getParameter("id"));
-        log.info("Showing edit form for meal with id: {}", id);
-        Meal existingMeal = crudRepository.getById(id);
+        log.info("Showing edit form for meal with id: {}", getId(request));
+        Meal existingMeal = crudRepository.getById(getId(request));
         request.setAttribute("meal", existingMeal);
         request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
     }
@@ -102,25 +99,31 @@ public class MealServlet extends HttpServlet {
     }
 
     private void update(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int id = Integer.parseInt(request.getParameter("id"));
         Meal meal = parseFromRequest(request);
-        meal.setId(id);
-        log.info("Updating meal with id: {}, new details: {}", id, meal);
-        crudRepository.update(id, meal);
+        log.info("Updating meal with id: {}, new details: {}", getId(request), meal);
+        crudRepository.update(meal);
         response.sendRedirect("meals");
     }
 
     private void delete(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        int id = Integer.parseInt(request.getParameter("id"));
-        log.info("Deleting meal with id: {}", id);
-        crudRepository.delete(id);
+        log.info("Deleting meal with id: {}", getId(request));
+        crudRepository.delete(getId(request));
         response.sendRedirect("meals");
     }
 
+    private static Integer getId(HttpServletRequest request) {
+        try {
+            return Integer.valueOf(request.getParameter("id"));
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
     private Meal parseFromRequest(HttpServletRequest request) {
+        Integer id = getId(request);
         LocalDateTime dateTime = LocalDateTime.parse(request.getParameter("dateTime"));
         String description = request.getParameter("description");
         int calories = Integer.parseInt(request.getParameter("calories"));
-        return new Meal(dateTime, description, calories);
+        return new Meal(id, dateTime, description, calories);
     }
 }

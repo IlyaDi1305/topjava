@@ -19,7 +19,7 @@ public class MealsUtil {
     private static final Logger log = getLogger(MealsUtil.class);
     public static final int CALORIES_PER_DAY = 2000;
 
-    private static LocalDateTime currDateTime(){
+    public static LocalDateTime currDateTime(){
         LocalDateTime currentDateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm");
         String formattedDateTime = currentDateTime.format(formatter);
@@ -44,6 +44,6 @@ public class MealsUtil {
     }
 
     public static Meal getDefaultMeal() {
-        return new Meal(currDateTime(), null, 0);
+        return new Meal(null, currDateTime(), null, 0);
     }
 }
