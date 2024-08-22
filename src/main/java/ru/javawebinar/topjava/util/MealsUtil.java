@@ -44,6 +44,6 @@ public class MealsUtil {
     }
 
     public static Meal getDefaultMeal() {
-        return new Meal(currDateTime(), "default description", 0);
+        return new Meal(currDateTime(), null, 0);
     }
 }

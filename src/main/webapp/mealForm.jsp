@@ -24,7 +24,7 @@
         <tr>
             <td colspan="2">
                 <input type="submit" value="${meal.id == 0 ? "Add" : "Update"}">
-                <input type="hidden" name="action" value="${meal.id == 0 ? "add" : "update"}">
+                <input type="hidden" name="id" value="${meal.id}">
                 <button onclick="window.history.back()" type="button">Cancel</button>
             </td>
         </tr>

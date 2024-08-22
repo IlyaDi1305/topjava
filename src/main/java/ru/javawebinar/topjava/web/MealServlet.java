@@ -60,24 +60,16 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-        String action = request.getParameter("action");
+        int idPars = Integer.parseInt(request.getParameter("id"));
 
-        log.info("Received POST request with action: {}", action);
+        log.info("Received POST request with action: {}", idPars);
 
-        if (action == null) {
-            action = "list";
-        }
-
-        switch (action) {
-            case "add":
-                add(request, response);
-                break;
-            case "update":
-                update(request, response);
-                break;
-            default:
-                listMeals(request, response);
-                break;
+        if (idPars == 0) {
+            add(request, response);
+        } else if (idPars > 0) {
+            update(request, response);
+        } else {
+            listMeals(request, response);
         }
     }
 
