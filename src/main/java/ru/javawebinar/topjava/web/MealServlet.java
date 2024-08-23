@@ -112,10 +112,11 @@ public class MealServlet extends HttpServlet {
     }
 
     private static Integer getId(HttpServletRequest request) {
-        try {
-            return Integer.valueOf(request.getParameter("id"));
-        } catch (NumberFormatException e) {
+        String param = request.getParameter("id");
+        if (param.equals("")) {
             return null;
+        } else {
+            return Integer.parseInt(param);
         }
     }
 

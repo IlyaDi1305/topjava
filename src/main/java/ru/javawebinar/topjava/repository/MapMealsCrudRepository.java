@@ -6,20 +6,16 @@ import ru.javawebinar.topjava.model.Meal;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class MapMealsCrudRepository implements MealsCrudRepository {
 
     private static final Logger log = getLogger(MapMealsCrudRepository.class);
-    private final Lock lock = new ReentrantLock();
     private final Map<Integer, Meal> meals = new ConcurrentHashMap<>();
     private final AtomicInteger counter = new AtomicInteger(0);
 
@@ -71,13 +67,20 @@ public class MapMealsCrudRepository implements MealsCrudRepository {
 
     @Override
     public Meal update(Meal meal) {
-        log.info("Update meal : {}", meal);
-        meals.put(meal.getId(), meal);
-        return meal;
+        int id = meal.getId();
+        if (getById(id) != null) {
+            log.info("Update meal : {}", meal);
+            meals.put(id, meal);
+            return meal;
+        } else {
+            log.info("with this id no meals : {}", meal);
+            return null;
+        }
     }
 
     @Override
     public void delete(Integer id) {
-        log.info("Meal deleted: {}", meals.remove(id));
+        log.info("Meal deleted: {}", id);
+        meals.remove(id);
     }
 }
