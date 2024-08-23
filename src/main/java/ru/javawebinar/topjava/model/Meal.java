@@ -18,7 +18,6 @@ public class Meal {
         this.calories = calories;
     }
 
-
     public Integer getId() {
         return id;
     }
@@ -31,16 +30,13 @@ public class Meal {
         return dateTime;
     }
 
-
     public String getDescription() {
         return description;
     }
 
-
     public int getCalories() {
         return calories;
     }
-
 
     public LocalDate getDate() {
         return dateTime.toLocalDate();

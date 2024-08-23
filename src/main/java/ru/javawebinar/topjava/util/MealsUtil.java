@@ -18,12 +18,10 @@ public class MealsUtil {
 
     private static final Logger log = getLogger(MealsUtil.class);
     public static final int CALORIES_PER_DAY = 2000;
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm");
 
-    public static LocalDateTime currDateTime(){
-        LocalDateTime currentDateTime = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm");
-        String formattedDateTime = currentDateTime.format(formatter);
-        return LocalDateTime.parse(formattedDateTime, formatter);
+    public static LocalDateTime currDateTime() {
+        return LocalDateTime.parse(LocalDateTime.now().format(FORMATTER), FORMATTER);
     }
 
     public static List<MealTo> filteredByStreams(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {

@@ -5,7 +5,10 @@ import ru.javawebinar.topjava.model.Meal;
 
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
@@ -64,13 +67,7 @@ public class MealsHashMapRepository implements CrudMealsRepository {
 
     @Override
     public void delete(Integer id) {
-        if (meals.get(id) != null) {
-            log.info("Deleting meal with id: {}", id);
-            meals.remove(id);
-            log.info("Meal deleted: {}", id);
-        } else {
-            log.warn("Meal not found for deletion: {}", id);
-        }
+        log.info("Meal deleted: {}", meals.remove(id));
     }
 
     private void fillDefaultData() {
