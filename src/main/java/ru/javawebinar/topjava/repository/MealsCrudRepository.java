@@ -4,11 +4,11 @@ import ru.javawebinar.topjava.model.Meal;
 
 import java.util.List;
 
-public interface CrudMealsRepository {
+public interface MealsCrudRepository {
 
     List<Meal> getAll();
 
-    Meal getById(Integer id);
+    Meal getById(int id);
 
     Meal add(Meal meal);
 

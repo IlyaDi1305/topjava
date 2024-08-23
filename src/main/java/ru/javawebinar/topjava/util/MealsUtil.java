@@ -18,11 +18,6 @@ public class MealsUtil {
 
     private static final Logger log = getLogger(MealsUtil.class);
     public static final int CALORIES_PER_DAY = 2000;
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm");
-
-    public static LocalDateTime currDateTime() {
-        return LocalDateTime.parse(LocalDateTime.now().format(FORMATTER), FORMATTER);
-    }
 
     public static List<MealTo> filteredByStreams(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
         log.info("Filtering meals by time range and calories");
@@ -42,6 +37,6 @@ public class MealsUtil {
     }
 
     public static Meal getDefaultMeal() {
-        return new Meal(null, currDateTime(), null, 0);
+        return new Meal(null, TimeUtil.currDateTime(), null, 0);
     }
 }

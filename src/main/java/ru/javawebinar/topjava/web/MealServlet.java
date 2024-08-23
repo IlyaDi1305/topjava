@@ -1,8 +1,8 @@
 package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
-import ru.javawebinar.topjava.repository.CrudMealsRepository;
-import ru.javawebinar.topjava.repository.MealsHashMapRepository;
+import ru.javawebinar.topjava.repository.MealsCrudRepository;
+import ru.javawebinar.topjava.repository.MapMealsCrudRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.model.Meal;
 
@@ -19,11 +19,11 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = getLogger(MealServlet.class);
-    private CrudMealsRepository crudRepository;
+    private MealsCrudRepository crudRepository;
 
     @Override
-    public void init(){
-        crudRepository = new MealsHashMapRepository();
+    public void init() {
+        crudRepository = new MapMealsCrudRepository();
     }
 
     @Override
@@ -59,12 +59,11 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-
-        log.info("Received POST request with id: {}", getId(request));
-
-        if (getId(request) == null) {
+        Integer id = getId(request);
+        log.info("Received POST request with id: {}", id);
+        if (id == null) {
             add(request, response);
-        } else if (getId(request) != null) {
+        } else if (id != null) {
             update(request, response);
         } else {
             listMeals(request, response);
@@ -80,13 +79,14 @@ public class MealServlet extends HttpServlet {
 
     private void showNewForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.info("Showing form for a new meal");
-        request.setAttribute("meal", new Meal(null, MealsUtil.currDateTime(), null, 0));
+        request.setAttribute("meal", MealsUtil.getDefaultMeal());
         request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
     }
 
     private void showEditForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        log.info("Showing edit form for meal with id: {}", getId(request));
-        Meal existingMeal = crudRepository.getById(getId(request));
+        Integer id = getId(request);
+        log.info("Showing edit form for meal with id: {}", id);
+        Meal existingMeal = crudRepository.getById(id);
         request.setAttribute("meal", existingMeal);
         request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
     }
