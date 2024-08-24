@@ -14,5 +14,5 @@ public interface MealsCrudRepository {
 
     Meal update(Meal meal);
 
-    void delete(Integer id);
+    void delete(int id);
 }

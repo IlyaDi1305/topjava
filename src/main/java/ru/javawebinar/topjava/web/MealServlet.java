@@ -2,7 +2,7 @@ package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
 import ru.javawebinar.topjava.repository.MealsCrudRepository;
-import ru.javawebinar.topjava.repository.MapMealsCrudRepository;
+import ru.javawebinar.topjava.repository.InMemoryMealsCrudRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.model.Meal;
 
@@ -23,7 +23,7 @@ public class MealServlet extends HttpServlet {
 
     @Override
     public void init() {
-        crudRepository = new MapMealsCrudRepository();
+        crudRepository = new InMemoryMealsCrudRepository();
     }
 
     @Override
@@ -63,10 +63,8 @@ public class MealServlet extends HttpServlet {
         log.info("Received POST request with id: {}", id);
         if (id == null) {
             add(request, response);
-        } else if (id != null) {
-            update(request, response);
         } else {
-            listMeals(request, response);
+            update(request, response);
         }
     }
 
@@ -100,24 +98,21 @@ public class MealServlet extends HttpServlet {
 
     private void update(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Meal meal = parseFromRequest(request);
-        log.info("Updating meal with id: {}, new details: {}", getId(request), meal);
+        log.info("Updating meal with id: {}, new details: {}", meal.getId(), meal);
         crudRepository.update(meal);
         response.sendRedirect("meals");
     }
 
     private void delete(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        log.info("Deleting meal with id: {}", getId(request));
-        crudRepository.delete(getId(request));
+        Integer id = getId(request);
+        log.info("Deleting meal with id: {}", id);
+        crudRepository.delete(id);
         response.sendRedirect("meals");
     }
 
     private static Integer getId(HttpServletRequest request) {
         String param = request.getParameter("id");
-        if (param.equals("")) {
-            return null;
-        } else {
-            return Integer.parseInt(param);
-        }
+        return param.isEmpty() ? null : Integer.parseInt(param);
     }
 
     private Meal parseFromRequest(HttpServletRequest request) {

@@ -13,13 +13,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-public class MapMealsCrudRepository implements MealsCrudRepository {
+public class InMemoryMealsCrudRepository implements MealsCrudRepository {
 
-    private static final Logger log = getLogger(MapMealsCrudRepository.class);
+    private static final Logger log = getLogger(InMemoryMealsCrudRepository.class);
     private final Map<Integer, Meal> meals = new ConcurrentHashMap<>();
     private final AtomicInteger counter = new AtomicInteger(0);
 
-    public MapMealsCrudRepository() {
+    public InMemoryMealsCrudRepository() {
         fillDefaultData();
     }
 
@@ -68,18 +68,18 @@ public class MapMealsCrudRepository implements MealsCrudRepository {
     @Override
     public Meal update(Meal meal) {
         int id = meal.getId();
-        if (getById(id) != null) {
+        boolean isUpdated = meals.replace(id, meal) != null;
+        if (isUpdated) {
             log.info("Update meal : {}", meal);
-            meals.put(id, meal);
             return meal;
         } else {
-            log.info("with this id no meals : {}", meal);
+            log.info("No meal found with id: {}", id);
             return null;
         }
     }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(int id) {
         log.info("Meal deleted: {}", id);
         meals.remove(id);
     }
