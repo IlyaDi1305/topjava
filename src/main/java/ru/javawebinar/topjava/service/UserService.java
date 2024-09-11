@@ -35,7 +35,7 @@ public class UserService {
     }
 
     public List<User> getAll() {
-        return (List<User>) repository.getAll();
+        return repository.getAll();
     }
 
     public void update(User user) {
