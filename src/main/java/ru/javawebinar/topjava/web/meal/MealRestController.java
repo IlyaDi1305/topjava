@@ -12,6 +12,9 @@ import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.util.List;
 
+import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
+import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
+
 @Controller
 public class MealRestController {
     private final MealService service;
@@ -39,12 +42,16 @@ public class MealRestController {
     }
 
     public Meal create(Meal meal) {
+        checkNew(meal);
         log.info("creating meal: {}", meal);
         return service.create(meal, SecurityUtil.authUserId());
     }
 
-    public void update(Meal meal) {
-        log.info("updating meal: {}", meal);
+    public void update(Meal meal, int id) {
+        assureIdConsistent(meal, id);
+        log.info("updating meal: {}, id: {}", meal, id);
         service.update(meal, SecurityUtil.authUserId());
     }
+
+    
 }
