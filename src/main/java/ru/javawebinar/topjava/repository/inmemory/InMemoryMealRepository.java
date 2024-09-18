@@ -5,6 +5,8 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -12,6 +14,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
+import static ru.javawebinar.topjava.util.DateTimeUtil.isWithinDateRange;
+import static ru.javawebinar.topjava.util.DateTimeUtil.isWithinTimeRange;
 
 @Repository
 public class InMemoryMealRepository implements MealRepository {
@@ -57,5 +62,18 @@ public class InMemoryMealRepository implements MealRepository {
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
     }
-}
 
+    @Override
+    public List<Meal> getAllFiltered(int userId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
+        Map<Integer, Meal> meals = repository.get(userId);
+        if (meals == null || meals.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return meals.values().stream()
+                .filter(meal -> isWithinDateRange(meal.getDate(), startDate, endDate))  // фильтрация по дате
+                .filter(meal -> isWithinTimeRange(meal.getTime(), startTime, endTime))  // фильтрация по времени
+                .sorted(Comparator.comparing(Meal::getDateTime).reversed())   // сортировка по времени
+                .collect(Collectors.toList());
+    }
+}
