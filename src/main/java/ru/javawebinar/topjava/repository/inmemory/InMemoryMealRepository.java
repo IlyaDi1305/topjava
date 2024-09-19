@@ -1,8 +1,10 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.time.LocalDate;
@@ -13,10 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import static ru.javawebinar.topjava.util.DateTimeUtil.isWithinDateRange;
-import static ru.javawebinar.topjava.util.DateTimeUtil.isWithinTimeRange;
 
 @Repository
 public class InMemoryMealRepository implements MealRepository {
@@ -54,26 +54,25 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getAll(int userId) {
-        Map<Integer, Meal> meals = repository.get(userId);
-        if (meals == null || meals.isEmpty()) {
-            return Collections.emptyList();
-        }
-        return meals.values().stream()
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
-                .collect(Collectors.toList());
+        return getFilteredMeals(userId, meal -> true);
     }
 
     @Override
     public List<Meal> getAllFiltered(int userId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
+        return getFilteredMeals(userId, meal -> DateTimeUtil.isWithinDateRange(meal.getDate(), startDate, endDate) &&
+                DateTimeUtil.isWithinTimeRange(meal.getTime(), startTime, endTime)
+        );
+    }
+
+    private List<Meal> getFilteredMeals(int userId, Predicate<Meal> filter) {
         Map<Integer, Meal> meals = repository.get(userId);
-        if (meals == null || meals.isEmpty()) {
+        if (CollectionUtils.isEmpty(meals)) {
             return Collections.emptyList();
         }
 
         return meals.values().stream()
-                .filter(meal -> isWithinDateRange(meal.getDate(), startDate, endDate))  // фильтрация по дате
-                .filter(meal -> isWithinTimeRange(meal.getTime(), startTime, endTime))  // фильтрация по времени
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed())   // сортировка по времени
+                .filter(filter)
+                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
     }
 }

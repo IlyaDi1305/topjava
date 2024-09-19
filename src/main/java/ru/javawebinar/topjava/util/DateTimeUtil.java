@@ -16,11 +16,11 @@ public class DateTimeUtil {
         return ldt == null ? "" : ldt.format(DATE_TIME_FORMATTER);
     }
 
-    public static boolean isWithinDateRange(LocalDate lt, LocalDate startDate, LocalDate endDate) {
-        return startDate != null && lt.isBefore(startDate) && endDate != null && lt.isAfter(endDate);
+    public static boolean isWithinDateRange(LocalDate ld, LocalDate startDate, LocalDate endDate) {
+        return !ld.isBefore(startDate != null ? startDate : LocalDate.MIN) && !ld.isAfter(endDate != null ? endDate : LocalDate.MAX);
     }
 
     public static boolean isWithinTimeRange(LocalTime lt, LocalTime startTime, LocalTime endTime) {
-        return startTime != null && lt.isBefore(startTime) && endTime != null && lt.isAfter(endTime);
+        return !lt.isBefore(startTime != null ? startTime : LocalTime.MIN) && !lt.isAfter(endTime != null ? endTime : LocalTime.MAX);
     }
 }
