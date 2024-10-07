@@ -27,14 +27,12 @@ public class SpringMain {
             adminUserController.update(updatedUser, createdUser.getId());
             User retrievedUser = profileUserController.get(createdUser.getId());
             System.out.println("Обновленный пользователь: " + retrievedUser);
-            if (retrievedUser.getName().equals("updatedUserName") &&
-                    retrievedUser.getEmail().equals("updatedEmail@mail.ru")) {
+            if (retrievedUser.getName().equals("updatedUserName") && retrievedUser.getEmail().equals("updatedEmail@mail.ru")) {
                 System.out.println("Обновление прошло успешно!");
             } else {
                 System.out.println("Ошибка при обновлении.");
             }
-            User createdUser2 = profileUserController.create(
-                    new User(null, "userName2", "email2@mail.ru", "password", Role.USER));
+            User createdUser2 = profileUserController.create(new User(null, "userName2", "email2@mail.ru", "password", Role.USER));
             System.out.println("Созданный пользователь 2: " + createdUser2);
 
             MealRestController mealRestController = appCtx.getBean(MealRestController.class);
@@ -44,8 +42,7 @@ public class SpringMain {
                 System.out.println("Фильтр вернул пустой список.");
             } else {
                 System.out.println("Отфильтрованные приемы пищи:");
-                filteredMeals.forEach(mealTo ->
-                        System.out.println(mealTo + " excess: " + mealTo.isExcess()));
+                filteredMeals.forEach(mealTo -> System.out.println(mealTo + " excess: " + mealTo.isExcess()));
             }
             boolean hasExcess = filteredMeals.stream().anyMatch(MealTo::isExcess);
             if (hasExcess) {
@@ -53,6 +50,7 @@ public class SpringMain {
             } else {
                 System.out.println("Нет приемов пищи с превышением калорий.");
             }
+            System.out.println(mealRestController.getAll());
         }
     }
 }
