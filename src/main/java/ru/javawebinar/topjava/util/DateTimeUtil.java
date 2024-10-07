@@ -17,10 +17,10 @@ public class DateTimeUtil {
     }
 
     public static boolean isWithinDateRange(LocalDate ld, LocalDate startDate, LocalDate endDate) {
-        return !ld.isBefore(startDate != null ? startDate : LocalDate.MIN) && !ld.isAfter(endDate != null ? endDate : LocalDate.MAX);
+        return (startDate == null || !ld.isBefore(startDate)) && (endDate == null || !ld.isAfter(endDate));
     }
 
     public static boolean isWithinTimeRange(LocalTime lt, LocalTime startTime, LocalTime endTime) {
-        return !lt.isBefore(startTime != null ? startTime : LocalTime.MIN) && !lt.isAfter(endTime != null ? endTime : LocalTime.MAX);
+        return (startTime == null || !lt.isBefore(startTime)) && (endTime == null || !lt.isAfter(endTime));
     }
 }
