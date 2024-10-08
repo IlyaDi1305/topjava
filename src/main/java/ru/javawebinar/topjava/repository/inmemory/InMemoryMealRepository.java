@@ -58,9 +58,8 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public List<Meal> getAllFiltered(int userId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
-        return getFilteredMeals(userId, meal -> DateTimeUtil.isWithinDateRange(meal.getDate(), startDate, endDate)
-        );
+    public List<Meal> getAllFiltered(int userId, LocalDate startDate, LocalDate endDate) {
+        return getFilteredMeals(userId, meal -> DateTimeUtil.isWithinDateRange(meal.getDate(), startDate, endDate));
     }
 
     private List<Meal> getFilteredMeals(int userId, Predicate<Meal> filter) {

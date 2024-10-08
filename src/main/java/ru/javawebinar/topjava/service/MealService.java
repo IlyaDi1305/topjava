@@ -40,6 +40,6 @@ public class MealService {
     }
 
     public List<Meal> getAllFiltered(int userId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
-        return repository.getAllFiltered(userId, startDate, endDate, startTime, endTime);
+        return repository.getAllFiltered(userId, startDate, endDate);
     }
 }
