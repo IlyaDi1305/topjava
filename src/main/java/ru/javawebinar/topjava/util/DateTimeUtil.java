@@ -21,6 +21,6 @@ public class DateTimeUtil {
     }
 
     public static boolean isWithinTimeRange(LocalTime lt, LocalTime startTime, LocalTime endTime) {
-        return (startTime == null || !lt.isBefore(startTime)) && (endTime == null || !lt.isAfter(endTime));
+        return (startTime == null || !lt.isBefore(startTime)) && (endTime == null || lt.isBefore(endTime));
     }
 }

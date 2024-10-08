@@ -45,7 +45,7 @@ public class MealsUtil {
     public static List<MealTo> getFilteredTos(Collection<Meal> meals, int caloriesPerDay, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
         return filterByPredicate(meals, caloriesPerDay, meal ->
                 DateTimeUtil.isWithinDateRange(meal.getDate(), startDate, endDate) &&
-                        DateTimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime)
+                        DateTimeUtil.isWithinTimeRange(meal.getTime(), startTime, endTime)
         );
     }
 

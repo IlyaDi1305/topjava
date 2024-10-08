@@ -37,7 +37,7 @@ public class SpringMain {
 
             MealRestController mealRestController = appCtx.getBean(MealRestController.class);
             System.out.println("\n=== Тест фильтрации еды ===");
-            List<MealTo> filteredMeals = mealRestController.getAllFiltered(LocalDate.of(2020, 1, 30), LocalDate.of(2020, 1, 31), LocalTime.of(0, 0), LocalTime.of(1, 0));
+            List<MealTo> filteredMeals = mealRestController.getAllFiltered(LocalDate.of(2020, 1, 30), LocalDate.of(2020, 1, 31), LocalTime.of(0, 0), LocalTime.of(10, 0));
             if (filteredMeals.isEmpty()) {
                 System.out.println("Фильтр вернул пустой список.");
             } else {
