@@ -48,7 +48,7 @@ public class JdbcMealRepository implements MealRepository {
             Number newKey = insertMeal.executeAndReturnKey(map);
             meal.setId(newKey.intValue());
         } else if (namedParameterJdbcTemplate.update(
-                "UPDATE meals SET description=:description, calories=:calories, data_time=:data_time, " +
+                "UPDATE meals SET description=:description, calories=:calories, date_time=:date_time " +
                         "WHERE id=:id AND user_id=:user_id", map) == 0) {
             return null;
         }
@@ -60,11 +60,9 @@ public class JdbcMealRepository implements MealRepository {
         return jdbcTemplate.update("DELETE FROM meals WHERE id=? and user_id=?", id, userId) != 0;
     }
 
-    //TODO Exception Report PreparedStatementCallback; bad SQL grammar [SELECT * FROM users WHERE user_id=?
-    // AND id = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: column "user_id" does not exist
     @Override
     public Meal get(int id, int userId) {
-        List<Meal> meals = jdbcTemplate.query("SELECT * FROM users WHERE user_id=? AND id = ?", ROW_MAPPER, userId, id);
+        List<Meal> meals = jdbcTemplate.query("SELECT * FROM meals WHERE id=? AND user_id = ?", ROW_MAPPER, id, userId);
         return DataAccessUtils.singleResult(meals);
     }
 
