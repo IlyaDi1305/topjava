@@ -15,13 +15,14 @@ import java.util.List;
 
 
 @Repository
+@Transactional(readOnly = true)
 public class JpaMealRepository implements MealRepository {
 
     @PersistenceContext
     private EntityManager em;
 
     @Override
-    @Transactional
+    @Transactional(readOnly = false)
     public Meal save(Meal meal, int userId) {
         User ref = em.getReference(User.class, userId);
         meal.setUser(ref);
@@ -37,7 +38,7 @@ public class JpaMealRepository implements MealRepository {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = false)
     public boolean delete(int id, int userId) {
         return em.createNamedQuery(Meal.DELETE)
                 .setParameter("id", id)
@@ -46,7 +47,6 @@ public class JpaMealRepository implements MealRepository {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Meal get(int id, int userId) {
         try {
             return em.createNamedQuery(Meal.GET_BY_ID, Meal.class)
@@ -67,7 +67,6 @@ public class JpaMealRepository implements MealRepository {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
         return em.createNamedQuery(Meal.GET_BETWEEN_HALF_OPEN, Meal.class)
                 .setParameter("userId", userId)
