@@ -15,11 +15,10 @@ import java.time.LocalTime;
         @NamedQuery(name = Meal.GET_BY_ID, query = "SELECT m FROM Meal m WHERE m.id= :id AND m.user.id= :userId"),
         @NamedQuery(name = Meal.ALL_SORTED, query = "SELECT m FROM Meal m WHERE m.user.id= :userId ORDER BY m.dateTime DESC"),
         @NamedQuery(name = Meal.GET_BETWEEN_HALF_OPEN, query = "SELECT m FROM Meal m WHERE m.dateTime >= :startDateTime " +
-                "AND m.dateTime < :endDateTime AND m.user.id= :userId ORDER BY m.dateTime DESC"),
+                "AND m.dateTime < :endDateTime AND m.user.id= :userId ORDER BY m.dateTime DESC")
 })
-
 @Entity
-@Table(name = "meal")
+@Table(name = "meal", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time"}, name = "meal_unique_user_datetime_idx")})
 public class Meal extends AbstractBaseEntity {
 
     public static final String DELETE = "Meal.delete";
