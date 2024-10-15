@@ -23,7 +23,7 @@ public class Meal extends AbstractBaseEntity {
 
     public static final String DELETE = "Meal.delete";
     public static final String GET_BY_ID = "Meal.getByEmail";
-    public static final String GET_BETWEEN_HALF_OPEN = "Meal.getAllSorted";
+    public static final String GET_BETWEEN_HALF_OPEN = "Meal.getBetweenHalfOpen";
     public static final String ALL_SORTED = "Meal.getAllSorted";
 
     @Column(name = "date_time", nullable = false, unique = true)
