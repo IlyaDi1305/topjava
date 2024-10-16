@@ -6,14 +6,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.util.exception.NotFoundException;
-
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.List;
-
 
 @Repository
 @Transactional(readOnly = true)
@@ -23,7 +19,7 @@ public class JpaMealRepository implements MealRepository {
     private EntityManager em;
 
     @Override
-    @Transactional(readOnly = false)
+    @Transactional
     public Meal save(Meal meal, int userId) {
         if (meal.isNew()) {
             User ref = em.getReference(User.class, userId);
@@ -40,7 +36,7 @@ public class JpaMealRepository implements MealRepository {
     }
 
     @Override
-    @Transactional(readOnly = false)
+    @Transactional
     public boolean delete(int id, int userId) {
         return em.createNamedQuery(Meal.DELETE)
                 .setParameter("id", id)
@@ -58,7 +54,6 @@ public class JpaMealRepository implements MealRepository {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<Meal> getAll(int userId) {
         return em.createNamedQuery(Meal.ALL_SORTED, Meal.class)
                 .setParameter("userId", userId)
