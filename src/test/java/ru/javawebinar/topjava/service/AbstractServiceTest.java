@@ -37,7 +37,7 @@ public abstract class AbstractServiceTest {
     @Rule
     public Stopwatch stopwatch = TimingRules.STOPWATCH;
 
-    public boolean isJpaEnabled(String... profiles) {
+    public boolean isProfileEnabled(String... profiles) {
         return environment.acceptsProfiles(Profiles.of(profiles));
     }
 
