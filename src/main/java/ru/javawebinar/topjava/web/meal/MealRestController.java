@@ -8,15 +8,13 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
 import java.net.URI;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = MealRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = MealRestController.REST_URL_MEALS, produces = MediaType.APPLICATION_JSON_VALUE)
 public class MealRestController extends AbstractMealController {
 
-    static final String REST_URL = "/rest/meals";
+    static final String REST_URL_MEALS = "/rest/meals";
 
     @Override
     @GetMapping("/{id}")
@@ -41,7 +39,7 @@ public class MealRestController extends AbstractMealController {
     public ResponseEntity<Meal> createWithLocation(@RequestBody Meal meal) {
         Meal created = super.create(meal);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(REST_URL + "/{id}")
+                .path(REST_URL_MEALS + "/{id}")
                 .buildAndExpand(created.getId()).toUri();
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
@@ -59,10 +57,12 @@ public class MealRestController extends AbstractMealController {
      * <li>by time for every date</li>
      * </ol>
      */
-    @Override
-    @GetMapping("/get-between")
-    public List<MealTo> getBetween(@RequestParam LocalDate startDate, @RequestParam LocalTime startTime,
-                                   @RequestParam LocalDate endDate, @RequestParam LocalTime endTime) {
-        return super.getBetween(startDate, startTime, endDate, endTime);
-    }
+//TODO
+//    @GetMapping("/get-between")
+//    public List<MealTo> getBetween(
+//            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDateTime,
+//            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDateTime) {
+//        return super.getBetween(startDateTime.toLocalDate(), startDateTime.toLocalTime(),
+//                endDateTime.toLocalDate(), endDateTime.toLocalTime());
+//    }
 }
