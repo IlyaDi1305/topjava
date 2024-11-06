@@ -5,21 +5,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
+import java.util.List;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.*;
+import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
+import static ru.javawebinar.topjava.util.MealsUtil.getTos;
 import static ru.javawebinar.topjava.web.meal.MealRestController.REST_URL_MEALS;
 
-
-@Transactional
 public class MealRestControllerTest extends AbstractControllerTest {
 
     @Autowired
@@ -71,16 +72,19 @@ public class MealRestControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL_MEALS))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MEAL_MATCHER.contentJson(meals));
+                .andExpect(MEAL_TO_MATCHER.contentJson(getTos(meals, DEFAULT_CALORIES_PER_DAY)));
     }
 
+    //TODO
     @Test
     public void getBetween() throws Exception {
-        String startDateTime = "2020-01-30T09:00:00";
-        String endDateTime = "2020-01-30T23:59:59";
-        perform(MockMvcRequestBuilders.get(REST_URL_MEALS + "/get-between" + "?startDateTime=" + startDateTime + "&endDateTime=" + endDateTime))
+        String startDateTime = "2020-01-30T11:00:00";
+        String endDateTime = "2020-01-31T15:00:00";
+        perform(MockMvcRequestBuilders.get(REST_URL_MEALS + "/get-between" + "?startDateTime=" +
+                startDateTime + "&endDateTime=" + endDateTime))
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andExpect(MEAL_MATCHER.contentJson(meal3, meal2, meal1));
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MEAL_TO_MATCHER.contentJson(getTos(List.of(meal6, meal2), DEFAULT_CALORIES_PER_DAY)));
     }
 }
