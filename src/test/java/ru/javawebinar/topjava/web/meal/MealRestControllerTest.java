@@ -11,14 +11,11 @@ import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
-import java.util.List;
-
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.*;
-import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
-import static ru.javawebinar.topjava.util.MealsUtil.getTos;
+import static ru.javawebinar.topjava.util.MealsUtil.*;
 import static ru.javawebinar.topjava.web.meal.MealRestController.REST_URL_MEALS;
 
 public class MealRestControllerTest extends AbstractControllerTest {
@@ -75,7 +72,6 @@ public class MealRestControllerTest extends AbstractControllerTest {
                 .andExpect(MEAL_TO_MATCHER.contentJson(getTos(meals, DEFAULT_CALORIES_PER_DAY)));
     }
 
-    //TODO
     @Test
     public void getBetween() throws Exception {
         String startDateTime = "2020-01-30T11:00:00";
@@ -85,6 +81,6 @@ public class MealRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MEAL_TO_MATCHER.contentJson(getTos(List.of(meal6, meal2), DEFAULT_CALORIES_PER_DAY)));
+                .andExpect(MEAL_TO_MATCHER.contentJson(createTo(meal6, true), createTo(meal2, false)));
     }
 }
