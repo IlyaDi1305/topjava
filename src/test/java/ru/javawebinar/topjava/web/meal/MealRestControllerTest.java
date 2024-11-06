@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.model.Meal;
@@ -75,16 +74,13 @@ public class MealRestControllerTest extends AbstractControllerTest {
                 .andExpect(MEAL_MATCHER.contentJson(meals));
     }
 
-//TODO
-//    @Test
-//    public void getBetween() throws Exception {
-//        String startDateTime = "2020-01-01T10:00:00";
-//        String endDateTime = "2020-12-31T23:59:59";
-//        perform(MockMvcRequestBuilders.get(REST_URL_MEALS + "/get-between")
-//                        .param("startDateTime", startDateTime)
-//                        .param("endDateTime", endDateTime))
-//                .andExpect(MockMvcResultMatchers.status().isOk());
-//                MEAL_MATCHER.assertMatch(getBetween(startDateTime, endDateTime), meal1, meal2);
-//    }
+    @Test
+    public void getBetween() throws Exception {
+        String startDateTime = "2020-01-30T09:00:00";
+        String endDateTime = "2020-01-30T23:59:59";
+        perform(MockMvcRequestBuilders.get(REST_URL_MEALS + "/get-between" + "?startDateTime=" + startDateTime + "&endDateTime=" + endDateTime))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(MEAL_MATCHER.contentJson(meal3, meal2, meal1));
+    }
 }
-
