@@ -14,7 +14,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/meals")
+@RequestMapping("/profile/meals")
 public class MealUIController extends AbstractMealController{
 
     @Override
@@ -37,12 +37,13 @@ public class MealUIController extends AbstractMealController{
     }
 
     @PostMapping
-    @ResponseStatus(value = HttpStatus.CREATED)
-    public void createOrUpdate(@RequestParam Integer id,
-                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime date,
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void createOrUpdate(@RequestParam(required = false) Integer id,
+                               @RequestParam(name = "dateTime")
+                               @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime dateTime,
                                @RequestParam String description,
                                @RequestParam int calories){
-        Meal meal = new Meal(id, date, description, calories);
+        Meal meal = new Meal(id, dateTime, description, calories);
             if (meal.isNew()) {
                 super.create(meal);
             } else {
