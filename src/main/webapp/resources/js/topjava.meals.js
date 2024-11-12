@@ -51,13 +51,10 @@ function applyFilter() {
         startTime: startTime || null,
         endTime: endTime || null
     }, function (data) {
-        ctx.datatableApi.clear().rows.add(data).draw();
+        populateTable(data);
     });
 }
 function clearFilter() {
-    $('#startDate').val('');
-    $('#endDate').val('');
-    $('#startTime').val('');
-    $('#endTime').val('');
+    document.getElementById('filter').reset();
     updateTable();
 }
