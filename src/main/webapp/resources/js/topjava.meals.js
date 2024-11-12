@@ -13,7 +13,7 @@ $(function () {
             "info": true,
             "columns": [
                 {
-                    "data": "dataTime"
+                    "data": "dateTime"
                 },
                 {
                     "data": "description"
@@ -33,9 +33,31 @@ $(function () {
             "order": [
                 [
                     0,
-                    "asc"
+                    "desc"
                 ]
             ]
         })
     );
 });
+function applyFilter() {
+    const startDate = $('#startDate').val();
+    const endDate = $('#endDate').val();
+    const startTime = $('#startTime').val();
+    const endTime = $('#endTime').val();
+
+    $.get(ctx.ajaxUrl + "filter", {
+        startDate: startDate || null,
+        endDate: endDate || null,
+        startTime: startTime || null,
+        endTime: endTime || null
+    }, function (data) {
+        ctx.datatableApi.clear().rows.add(data).draw();
+    });
+}
+function clearFilter() {
+    $('#startDate').val('');
+    $('#endDate').val('');
+    $('#startTime').val('');
+    $('#endTime').val('');
+    updateTable();
+}

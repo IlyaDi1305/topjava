@@ -40,7 +40,7 @@ public class MealUIController extends AbstractMealController{
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void createOrUpdate(@RequestParam(required = false) Integer id,
                                @RequestParam(name = "dateTime")
-                               @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime dateTime,
+                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime,
                                @RequestParam String description,
                                @RequestParam int calories){
         Meal meal = new Meal(id, dateTime, description, calories);
